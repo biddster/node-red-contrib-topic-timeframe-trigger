@@ -1,0 +1,80 @@
+<!--
+The MIT License (MIT)
+
+Copyright (c) 2015 @biddster
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in
+all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+THE SOFTWARE.
+-->
+
+<script type="text/javascript">
+    RED.nodes.registerType('topic-hysteresis', {
+        category: 'function',
+        color: '#f37a33',
+        defaults: {
+            name: {value: ''},
+            topics: {value: '1'},
+            count: {value: '1'},
+            timeframe: {value: '1'},
+            triggeredtopic: {value: ''},
+            triggeredpayload: {value: ''}
+        },
+        inputs: 1,
+        outputs: 1,
+        icon: 'datetime.png',
+        label: function () {
+            return this.name || 'topic hysteresis';
+        },
+        paletteLabel: 'topic hysteresis',
+        align: 'left'
+    });
+</script>
+
+<script type="text/x-red" data-template-name="topic-hysteresis">
+    <div class="form-row">
+        <label for="node-input-name"><i class="icon-tag"></i> Name</label>
+        <input type="text" id="node-input-name" placeholder="Name">
+    </div>
+    <div class="form-row">
+		<label for="node-input-topics"><i class="fa"></i> Number of distinct topics required to trigger</label>
+		<input type="text" id="node-input-topics" placeholder="">
+	</div>
+    <div class="form-row">
+		<label for="node-input-count"><i class="fa"></i> Count of each distinct topic required to trigger</label>
+		<input type="text" id="node-input-count" placeholder="">
+	</div>
+	<div class="form-row">
+		<label for="node-input-timeframe"><i class="fa"></i> Time frame (seconds)</label>
+		<input type="text" id="node-input-timeframe" placeholder="">
+	</div>
+	<div class="form-row">
+		<label for="node-input-triggeredtopic"><i class="fa"></i> Topic when triggered</label>
+		<input type="text" id="node-input-triggeredtopic" placeholder="">
+	</div>
+	<div class="form-row">
+		<label for="node-input-triggeredpayload"><i class="fa"></i> Payload when triggered</label>
+		<input type="text" id="node-input-triggeredpayload" placeholder="">
+	</div>
+</script>
+
+<script type="text/x-red" data-help-name="topic-hysteresis">
+    <h1></h1>
+    <p>
+
+    <p>
+</script>
