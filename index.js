@@ -39,11 +39,7 @@ module.exports = function (RED) {
                 return;
             }
             if (!topics) {
-                timeout = setTimeout(function () {
-                    topics = null;
-                    timeout = null;
-                    node.status({fill: 'blue', shape: 'dot', text: 'Idle'});
-                }, config.timeframe * 1000);
+                timeout = setTimeout(reset, config.timeframe * 1000);
                 topics = {};
             }
             var topicCount = topics[msg.topic];
@@ -53,16 +49,24 @@ module.exports = function (RED) {
                 return count >= config.count;
             });
             if (countExceeded.length >= config.topics) {
+                reset();
                 node.send({topic: config.triggeredtopic, payload: config.triggeredpayload});
-                node.status({fill: 'green', shape: 'dot', text: 'Triggered: ' + config.triggeredtopic});
+                // node.status({fill: 'green', shape: 'dot', text: 'Triggered: ' + config.triggeredtopic});
             } else {
-                node.status({fill: 'green', shape: 'ring', text: msg.topic + ':' + topics[msg.topic]});
+                node.status({fill: 'green', shape: 'dot', text: msg.topic + ':' + topics[msg.topic]});
             }
         });
 
-        node.on('close', function () {
-            clearTimeout(timeout);
-        });
+        node.on('close', reset);
         node.status({fill: 'blue', shape: 'dot', text: 'Idle'});
+
+        function reset() {
+            if (timeout) {
+                clearTimeout(timeout);
+                timeout = null;
+            }
+            topics = null;
+            node.status({fill: 'blue', shape: 'dot', text: 'Idle'});
+        }
     });
 };
