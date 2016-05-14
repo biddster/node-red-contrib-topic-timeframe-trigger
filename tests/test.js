@@ -25,7 +25,6 @@
 "use strict";
 var assert = require('chai').assert;
 var _ = require('lodash');
-var moment = require('moment');
 
 function loadNode(config, redModule) {
     var _events = [], _status = undefined, _error = undefined, _messages = [];
@@ -72,22 +71,7 @@ function loadNode(config, redModule) {
 var nodeRedModule = require('../index.js');
 
 
-describe('schedex', function () {
-    it('should schedule initially', function () {
-        var node = loadNode({
-            onTime: '11:45',
-            onTopic: 'on',
-            onPayload: 'on payload',
-            offTime: '11:48',
-            offTopic: 'off',
-            offPayload: 'off payload',
-            lat: 51.33411,
-            lon: -0.83716,
-            unitTest: true
-        }, nodeRedModule);
-
-        // TODO - actually do something here.
-
-        // assert.strictEqual(2881, node.messages().length);
+describe('topic-timeframe-trigger', function () {
+    it('should work', function () {
     });
 });
