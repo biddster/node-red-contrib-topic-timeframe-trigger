@@ -27,10 +27,10 @@ module.exports = function (RED) {
 
     var _ = require("lodash");
 
-    RED.nodes.registerType('topic-hysteresis', function (config) {
+    RED.nodes.registerType('topic-timeframe-trigger', function (config) {
         RED.nodes.createNode(this, config);
         var node = this;
-        var topics = null;
+        var topics = null;  
         var timeout;
 
         node.on('input', function (msg) {

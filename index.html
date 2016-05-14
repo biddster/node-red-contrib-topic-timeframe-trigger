@@ -23,7 +23,7 @@ THE SOFTWARE.
 -->
 
 <script type="text/javascript">
-    RED.nodes.registerType('topic-hysteresis', {
+    RED.nodes.registerType('topic-timeframe-trigger', {
         category: 'function',
         color: '#f37a33',
         defaults: {
@@ -36,16 +36,16 @@ THE SOFTWARE.
         },
         inputs: 1,
         outputs: 1,
-        icon: 'datetime.png',
+        icon: 'trigger.png',
         label: function () {
-            return this.name || 'topic hysteresis';
+            return this.name || 'topic timeframe trigger';
         },
-        paletteLabel: 'topic hysteresis',
+        paletteLabel: 'topic trigger',
         align: 'left'
     });
 </script>
 
-<script type="text/x-red" data-template-name="topic-hysteresis">
+<script type="text/x-red" data-template-name="topic-timeframe-trigger">
     <div class="form-row">
         <label for="node-input-name"><i class="icon-tag"></i> Name</label>
         <input type="text" id="node-input-name" placeholder="Name">
@@ -73,8 +73,8 @@ THE SOFTWARE.
 </script>
 
 <script type="text/x-red" data-help-name="topic-hysteresis">
-    <h1></h1>
+    <h1>Topic Timeframe Trigger</h1>
     <p>
-
+Node which observes input topics and only produces an output if n distinct topics are received n times each within the specified time frame.
     <p>
 </script>
