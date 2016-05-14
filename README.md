@@ -1,6 +1,6 @@
-# node-red-contrib-stimeframe-trigger
+# node-red-contrib-timeframe-trigger
 
-
+Node-RED node which observes inputs and only produces an output if n distinct topics are received n times within the specified timeframe.
 
 ### Installation
  
