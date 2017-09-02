@@ -28,13 +28,27 @@ module.exports = function (RED) {
     var _ = require("lodash");
 
     RED.nodes.registerType('topic-timeframe-trigger', function (config) {
+
         RED.nodes.createNode(this, config);
+
         var node = this,
-            topics = null,
-            timeout = null;
+            triggers = null,
+            timeout = null,
+            globalConfig = {
+                debug: false
+            };
+
+        function getGlobalConfig() {
+            return _.assign(globalConfig, node.name && node.context().global.get(node.name) || node.context().global.get('topic-timeframe-trigger'));
+        }
+
+        function debug() {
+            if (getGlobalConfig().debug) node.log.apply(node, arguments);
+        }
 
         node.on('input', function (msg) {
             if (!msg.topic) {
+                node.error('Message has no topic: ' + msg.payload);
                 node.status({
                     fill: 'red',
                     shape: 'dot',
@@ -42,28 +56,31 @@ module.exports = function (RED) {
                 });
                 return;
             }
-            if (!topics) {
+            if (!triggers) {
                 timeout = setTimeout(reset, config.timeframe * 1000);
-                topics = {};
+                triggers = [];
             }
-            var topicCount = topics[msg.topic];
-            topics[msg.topic] = !topicCount ? 1 : topicCount + 1;
+            triggers.push(msg);
 
-            var countExceeded = _.filter(topics, function (count) {
-                return count >= config.count;
+            var grouped = _.groupBy(triggers, 'topic');
+            var countExceeded = _.filter(grouped, function (msgs) {
+                return msgs.length >= config.count;
             });
             if (countExceeded.length >= config.topics) {
-                reset();
+                debug('Triggered by count: ' + countExceeded.length);
                 node.send({
                     topic: config.triggeredtopic,
-                    payload: config.triggeredpayload
+                    payload: config.triggeredpayload,
+                    triggers: triggers
                 });
+                reset();
                 // node.status({fill: 'green', shape: 'dot', text: 'Triggered: ' + config.triggeredtopic});
             } else {
+                debug('Msg received: ' + msg.topic + ' => ' + grouped[msg.topic].length);
                 node.status({
                     fill: 'green',
                     shape: 'dot',
-                    text: msg.topic + ':' + topics[msg.topic]
+                    text: msg.topic + ':' + grouped[msg.topic].length
                 });
             }
         });
@@ -80,12 +97,13 @@ module.exports = function (RED) {
                 clearTimeout(timeout);
                 timeout = null;
             }
-            topics = null;
+            triggers = null;
             node.status({
                 fill: 'blue',
                 shape: 'dot',
                 text: 'Idle'
             });
+            debug('Timeframe reset after ' + config.timeframe + 's');
         }
     });
 };

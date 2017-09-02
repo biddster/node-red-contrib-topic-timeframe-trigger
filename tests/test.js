@@ -32,16 +32,20 @@ var nodeRedModule = require('../index.js');
 describe('topic-timeframe-trigger', function () {
     it('should work', function () {
         var node = newNode();
-        node.emit('input', {
+        var msg1 = {
             topic: 't1',
             payload: 'p1'
-        });
-        node.emit('input', {
+        };
+        node.emit('input', msg1);
+        var msg2 = {
             topic: 't2',
             payload: 'p2'
-        });
+        };
+        node.emit('input', msg2);
         assert.strictEqual(node.sent(0).payload, 'triggered payload');
         assert.strictEqual(node.sent(0).topic, 'triggered topic');
+        assert.strictEqual(node.sent(0).triggers[0], msg1);
+        assert.strictEqual(node.sent(0).triggers[1], msg2);
     });
 });
 
