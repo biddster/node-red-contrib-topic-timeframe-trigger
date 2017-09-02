@@ -25,7 +25,23 @@
         "lodash": "^4.6.1"
     },
     "devDependencies": {
-        "chai": "^3.5.0"
+        "chai": "^3.5.0",
+        "mocha": "^3.5.0",
+        "eslint": "^3.19.0",
+        "eslint-config-biddster": "^0.3.0",
+        "node-red-contrib-mock-node": "^0.3.0"
+    },
+    "eslintConfig": {
+        "env": {
+            "es6": true,
+            "node": true,
+            "mocha": true
+        },
+        "parserOptions": {
+            "ecmaVersion": 6,
+            "sourceType": "module"
+        },
+        "extends": "eslint-config-biddster/es6-node"
     },
     "node-red": {
         "nodes": {

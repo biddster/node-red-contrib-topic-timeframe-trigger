@@ -29,13 +29,17 @@ module.exports = function (RED) {
 
     RED.nodes.registerType('topic-timeframe-trigger', function (config) {
         RED.nodes.createNode(this, config);
-        var node = this;
-        var topics = null;  
-        var timeout;
+        var node = this,
+            topics = null,
+            timeout = null;
 
         node.on('input', function (msg) {
             if (!msg.topic) {
-                node.status({fill: 'red', shape: 'dot', text: 'Msg has no topic'});
+                node.status({
+                    fill: 'red',
+                    shape: 'dot',
+                    text: 'Msg has no topic'
+                });
                 return;
             }
             if (!topics) {
@@ -50,15 +54,26 @@ module.exports = function (RED) {
             });
             if (countExceeded.length >= config.topics) {
                 reset();
-                node.send({topic: config.triggeredtopic, payload: config.triggeredpayload});
+                node.send({
+                    topic: config.triggeredtopic,
+                    payload: config.triggeredpayload
+                });
                 // node.status({fill: 'green', shape: 'dot', text: 'Triggered: ' + config.triggeredtopic});
             } else {
-                node.status({fill: 'green', shape: 'dot', text: msg.topic + ':' + topics[msg.topic]});
+                node.status({
+                    fill: 'green',
+                    shape: 'dot',
+                    text: msg.topic + ':' + topics[msg.topic]
+                });
             }
         });
 
         node.on('close', reset);
-        node.status({fill: 'blue', shape: 'dot', text: 'Idle'});
+        node.status({
+            fill: 'blue',
+            shape: 'dot',
+            text: 'Idle'
+        });
 
         function reset() {
             if (timeout) {
@@ -66,7 +81,11 @@ module.exports = function (RED) {
                 timeout = null;
             }
             topics = null;
-            node.status({fill: 'blue', shape: 'dot', text: 'Idle'});
+            node.status({
+                fill: 'blue',
+                shape: 'dot',
+                text: 'Idle'
+            });
         }
     });
 };
