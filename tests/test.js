@@ -25,53 +25,41 @@
 "use strict";
 var assert = require('chai').assert;
 var _ = require('lodash');
-
-function loadNode(config, redModule) {
-    var _events = [], _status = undefined, _error = undefined, _messages = [];
-    var RED = {
-        nodes: {
-            registerType: function (nodeName, nodeConfigFunc) {
-                this.nodeConfigFunc = nodeConfigFunc;
-            },
-            createNode: function () {
-            }
-        },
-        on: function (event, eventFunc) {
-            _events[event] = eventFunc;
-        },
-        emit: function (event, data) {
-            _events[event](data);
-        },
-        error: function (error) {
-            if (error) _error = error;
-            return _error;
-        },
-        status: function (status) {
-            if (status) _status = status;
-            return _status;
-        },
-        log: function () {
-            console.log.apply(this, arguments);
-        },
-        send: function (msg) {
-            assert(msg);
-            _messages.push(msg);
-        },
-        messages: function (messages) {
-            if (messages) _messages = messages;
-            return _messages;
-        }
-    };
-    redModule(RED);
-    RED.nodes.nodeConfigFunc.call(RED, config);
-    return RED;
-}
-
-
+var mock = require('node-red-contrib-mock-node');
 var nodeRedModule = require('../index.js');
 
 
 describe('topic-timeframe-trigger', function () {
     it('should work', function () {
+        var node = newNode();
+        var msg1 = {
+            topic: 't1',
+            payload: 'p1'
+        };
+        node.emit('input', msg1);
+        var msg2 = {
+            topic: 't2',
+            payload: 'p2'
+        };
+        node.emit('input', msg2);
+        assert.strictEqual(node.sent(0).payload, 'triggered payload');
+        assert.strictEqual(node.sent(0).topic, 'triggered topic');
+        assert.strictEqual(node.sent(0).triggers[0], msg1);
+        assert.strictEqual(node.sent(0).triggers[1], msg2);
     });
 });
+
+
+function newNode(configOverrides) {
+    var config = {
+        timeframe: 1000,
+        count: 1,
+        topics: 2,
+        triggeredtopic: 'triggered topic',
+        triggeredpayload: 'triggered payload'
+    };
+    if (configOverrides) {
+        _.assign(config, configOverrides);
+    }
+    return mock(nodeRedModule, config);
+}
