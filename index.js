@@ -1,3 +1,5 @@
+/* eslint-disable prefer-rest-params */
+/* eslint-disable prefer-spread */
 /**
  The MIT License (MIT)
 
@@ -23,47 +25,64 @@
  */
 
 module.exports = function (RED) {
-    'use strict';
-
-    var _ = require("lodash");
+    const _ = require('lodash');
 
     RED.nodes.registerType('topic-timeframe-trigger', function (config) {
-
         RED.nodes.createNode(this, config);
 
-        var node = this,
-            triggers = null,
-            timeout = null,
-            globalConfig = {
-                debug: false
-            };
+        // eslint-disable-next-line consistent-this
+        const node = this;
+        const globalConfig = {
+            debug: false,
+        };
+        let triggers = null;
+        let timeout = null;
 
-        function getGlobalConfig() {
+        const getGlobalConfig = function () {
             return _.assign(globalConfig, node.context().global.get('topic-timeframe-trigger'));
-        }
+        };
 
-        function debug() {
-            if (getGlobalConfig().debug) node.log.apply(node, arguments);
-        }
+        const debug = function () {
+            if (getGlobalConfig().debug) {
+                node.log.apply(node, arguments);
+            }
+        };
 
-        node.on('input', function (msg) {
+        const reset = function () {
+            if (timeout) {
+                clearTimeout(timeout);
+                timeout = null;
+            }
+
+            triggers = null;
+            node.status({
+                fill: 'blue',
+                shape: 'dot',
+                text: 'Idle',
+            });
+            debug('Timeframe reset after ' + config.timeframe + 's');
+        };
+
+        node.on('input', (msg) => {
             if (!msg.topic) {
                 node.error('Message has no topic: ' + msg.payload);
                 node.status({
                     fill: 'red',
                     shape: 'dot',
-                    text: 'Msg has no topic'
+                    text: 'Msg has no topic',
                 });
                 return;
             }
+
             if (!triggers) {
                 timeout = setTimeout(reset, config.timeframe * 1000);
                 triggers = [];
             }
+
             triggers.push(msg);
 
-            var grouped = _.groupBy(triggers, 'topic');
-            var countExceeded = _.filter(grouped, function (msgs) {
+            const grouped = _.groupBy(triggers, 'topic');
+            const countExceeded = _.filter(grouped, (msgs) => {
                 return msgs.length >= config.count;
             });
             if (countExceeded.length >= config.topics) {
@@ -71,7 +90,7 @@ module.exports = function (RED) {
                 node.send({
                     topic: config.triggeredtopic,
                     payload: config.triggeredpayload,
-                    triggers: triggers
+                    triggers,
                 });
                 reset();
                 // node.status({fill: 'green', shape: 'dot', text: 'Triggered: ' + config.triggeredtopic});
@@ -80,7 +99,7 @@ module.exports = function (RED) {
                 node.status({
                     fill: 'green',
                     shape: 'dot',
-                    text: msg.topic + ':' + grouped[msg.topic].length
+                    text: msg.topic + ':' + grouped[msg.topic].length,
                 });
             }
         });
@@ -89,21 +108,7 @@ module.exports = function (RED) {
         node.status({
             fill: 'blue',
             shape: 'dot',
-            text: 'Idle'
+            text: 'Idle',
         });
-
-        function reset() {
-            if (timeout) {
-                clearTimeout(timeout);
-                timeout = null;
-            }
-            triggers = null;
-            node.status({
-                fill: 'blue',
-                shape: 'dot',
-                text: 'Idle'
-            });
-            debug('Timeframe reset after ' + config.timeframe + 's');
-        }
     });
 };

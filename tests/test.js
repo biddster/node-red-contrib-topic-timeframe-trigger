@@ -1,3 +1,6 @@
+/* eslint-disable no-undef */
+/* eslint-disable func-style */
+/* eslint-disable prefer-arrow-callback */
 /**
  The MIT License (MIT)
 
@@ -22,44 +25,42 @@
  THE SOFTWARE.
  */
 
-"use strict";
-var assert = require('chai').assert;
-var _ = require('lodash');
-var mock = require('node-red-contrib-mock-node');
-var nodeRedModule = require('../index.js');
-
+const Assert = require('chai').assert;
+const _ = require('lodash');
+const Mock = require('node-red-contrib-mock-node');
+const NodeRedModule = require('../index.js');
 
 describe('topic-timeframe-trigger', function () {
     it('should work', function () {
-        var node = newNode();
-        var msg1 = {
+        const node = NewNode();
+        const msg1 = {
             topic: 't1',
-            payload: 'p1'
+            payload: 'p1',
         };
         node.emit('input', msg1);
-        var msg2 = {
+        const msg2 = {
             topic: 't2',
-            payload: 'p2'
+            payload: 'p2',
         };
         node.emit('input', msg2);
-        assert.strictEqual(node.sent(0).payload, 'triggered payload');
-        assert.strictEqual(node.sent(0).topic, 'triggered topic');
-        assert.strictEqual(node.sent(0).triggers[0], msg1);
-        assert.strictEqual(node.sent(0).triggers[1], msg2);
+        Assert.strictEqual(node.sent(0).payload, 'triggered payload');
+        Assert.strictEqual(node.sent(0).topic, 'triggered topic');
+        Assert.strictEqual(node.sent(0).triggers[0], msg1);
+        Assert.strictEqual(node.sent(0).triggers[1], msg2);
     });
 });
 
-
-function newNode(configOverrides) {
-    var config = {
+function NewNode(configOverrides) {
+    const config = {
         timeframe: 1000,
         count: 1,
         topics: 2,
         triggeredtopic: 'triggered topic',
-        triggeredpayload: 'triggered payload'
+        triggeredpayload: 'triggered payload',
     };
     if (configOverrides) {
         _.assign(config, configOverrides);
     }
-    return mock(nodeRedModule, config);
+
+    return Mock(NodeRedModule, config);
 }

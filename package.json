@@ -10,7 +10,9 @@
         "trigger"
     ],
     "scripts": {
-        "test": "mocha -R spec ./tests/test.js"
+        "test": "mocha -R spec ./tests/test.js",
+        "update-dependencies": "./node_modules/.bin/ncu -u && npm install",
+        "lint": "eslint ."
     },
     "author": "@biddster",
     "license": "MIT",
@@ -22,26 +24,66 @@
         "url": "https://github.com/biddster/node-red-contrib-topic-timeframe-trigger/issues"
     },
     "dependencies": {
-        "lodash": "^4.6.1"
+        "lodash": "^4.17.20"
     },
     "devDependencies": {
-        "chai": "^3.5.0",
-        "mocha": "^3.5.0",
-        "eslint": "^3.19.0",
-        "eslint-config-biddster": "^0.3.0",
-        "node-red-contrib-mock-node": "^0.3.0"
+        "@hapi/eslint-config-hapi": "13.0.2",
+        "@hapi/eslint-plugin-hapi": "4.3.5",
+        "babel-eslint": "10.1.0",
+        "chai": "^4.2.0",
+        "eslint": "^7.7.0",
+        "eslint-config-biddster": "^0.6.0",
+        "husky": "^4.2.5",
+        "lint-staged": "^10.2.11",
+        "mocha": "^8.1.1",
+        "node-red-contrib-mock-node": "^0.4.0",
+        "npm-check-updates": "^7.1.1",
+        "prettier": "^2.1.0"
+    },
+    "husky": {
+        "hooks": {
+            "pre-commit": "lint-staged"
+        }
     },
     "eslintConfig": {
-        "env": {
-            "es6": true,
-            "node": true,
-            "mocha": true
-        },
+        "extends": "@hapi/eslint-config-hapi",
+        "parser": "babel-eslint",
         "parserOptions": {
-            "ecmaVersion": 6,
-            "sourceType": "module"
+            "ecmaVersion": 2020,
+            "sourceType": "script"
         },
-        "extends": "eslint-config-biddster/es6-node"
+        "overrides": [
+            {
+                "files": [
+                    "*.js"
+                ],
+                "rules": {
+                    "@hapi/hapi/scope-start": "off",
+                    "comma-dangle": "off",
+                    "brace-style": "off",
+                    "strict": "off"
+                }
+            }
+        ]
+    },
+    "prettier": {
+        "singleQuote": true,
+        "tabWidth": 4,
+        "printWidth": 96
+    },
+    "nyc": {
+        "exclude": "tests/**"
+    },
+    "lint-staged": {
+        "*.js": [
+            "prettier --write",
+            "eslint",
+            "git add"
+        ],
+        "*.{md,html,json}": [
+            "prettier --write",
+            "git add"
+        ]
     },
     "node-red": {
         "nodes": {
